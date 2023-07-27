@@ -95,11 +95,15 @@ class hessian():
             loss.backward(create_graph=True)
             params, gradsH = get_params_grad(self.model)
             self.model.zero_grad()
-            Hv = torch.autograd.grad(gradsH,
+            try:
+                Hv = torch.autograd.grad(gradsH,
                                      params,
                                      grad_outputs=v,
                                      only_inputs=True,
                                      retain_graph=False)
+            except:
+                print('params: ', params)
+                print('gradsH: ', gradsH)
             THv = [
                 THv1 + Hv1 * float(tmp_num_data) + 0.
                 for THv1, Hv1 in zip(THv, Hv)
