@@ -69,8 +69,9 @@ class hessian():
                 ), self.targets.cuda()
 
             # if we only compute the Hessian information for a single batch data, we can re-use the gradients.
-            outputs = self.model(self.inputs)
-            loss = self.criterion(outputs, self.targets)
+            outputs = self.model(self.inputs, self.targets)
+            loss = outputs['loss']
+            # loss = self.criterion(outputs, self.targets)
             loss.backward(create_graph=True)
 
         # this step is used to extract the parameters from the model
@@ -88,8 +89,9 @@ class hessian():
         for inputs, targets in self.data:
             self.model.zero_grad()
             tmp_num_data = inputs.size(0)
-            outputs = self.model(inputs.to(device))
-            loss = self.criterion(outputs, targets.to(device))
+            outputs = self.model(inputs.to(device), targets.to(device))
+            # loss = self.criterion(outputs, targets.to(device))
+            loss = outputs['loss']
             loss.backward(create_graph=True)
             params, gradsH = get_params_grad(self.model)
             self.model.zero_grad()
